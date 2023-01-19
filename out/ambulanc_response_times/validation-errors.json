@@ -1,0 +1,9 @@
+[
+    {
+        "message": "License 'https://www.nisra.gov.uk/crown-copyright' is not recognised by csvcubed.",
+        "json_path": "$.license",
+        "offending_value": "https://www.nisra.gov.uk/crown-copyright",
+        "schema_validator_type": "enum",
+        "children": []
+    }
+]

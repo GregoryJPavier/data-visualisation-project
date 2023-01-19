@@ -1,0 +1,80 @@
+
+- This file is a data cube.
+
+- The data cube has the following catalog metadata:
+        - Title: Ambulance Response Times by Local Authority
+        - Label: Ambulance Response Times by Local Authority
+        - Issued: 2022-10-07T14:25:45.415398
+        - Modified: 2022-10-07T14:25:45.415398
+        - License: https://www.nisra.gov.uk/crown-copyright
+        - Creator: None
+        - Publisher: https://www.gov.uk/government/organisations/northern-ireland-statistics-and-research-agency
+        - Landing Pages: None
+        - Themes: 
+		-- https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthcaresystem
+        - Keywords: None
+        - Contact Point: None
+        - Identifier: Ambulance Response Times by Local Authority
+        - Comment: Average time taken by the appropriate response vehicle to respond to a medical incident.
+        - Description: Abstract: Figures from 2020 onwards are not directly comparable with earlier years presented. From 2020 onwards figures relate to the median time taken by the appropriate response vehicle to respond to an incident. Calculations are based on the time taken to respond to each incident within a one month time period (August). This data refers to CAT1, CAT1(T) and CAT2 emergency responses, excluding Healthcare Professionals (HCP) calls.
+		Prior to 2020, figures relate to the median i.e. midpoint value is reported rather than the simple average as it is unaffected by atypically long or short response times. 
+		The median response time for response to incidents is calculated over the month of August as a sample of the calendar year. Measured in minutes and seconds. Data supplied by the Northern Ireland Ambulance Service (NIAS). Data refers to Categories A, B & C emergency responses, excluding Healthcare Professional (HCP) calls. The median (i.e. the midpoint) is reported rather than the simple average as it is unaffected by atypically long or short response times (outliers).
+		Further analysis of this data for most and least deprived areas and also rural comparisons are available from the Department of Health, health inequalities statistics. Sub-regional inequality analysis are also available which includes analysis of inequality gaps within HSC Trust and LGD areas. Please see the following web address: https://www.health-ni.gov.uk/topics/dhssps-statistics-and-research/health-inequalities-statistics Making Life Better: Theme 4 - Creating the Conditions
+        
+
+- The data cube has the following data structure definition:
+        - Dataset Label: Ambulance Response Times by Local Authority
+        - Number of Components: 5
+        - Components:
+                                                                              Property                  Property Label Property Type Column Title  Required
+ambulance-response-times-by-local-authority.csv#measure/ambulance-response-time-median Ambulance response time, median       Measure                   True
+                        ambulance-response-times-by-local-authority.csv#dimension/year                            Year     Dimension         Year      True
+                   ambulance-response-times-by-local-authority.csv#dimension/geography                       Geography     Dimension      LGD2014      True
+                                          http://purl.org/linked-data/cube#measureType                                     Dimension    Statistic      True
+                           http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure                                     Attribute                   True
+        - Columns where suppress output is true: 
+		-- Local Government District
+		-- TLIST(A1)
+		-- STATISTIC CODE
+		-- Uri Identifier
+
+- The data cube has the following code list information:
+        - Number of Code Lists: 1
+        - Code Lists:
+         Code List Code List Label Columns Used In
+year.csv#code-list            Year            Year
+
+- The data cube has the following dataset information:
+        - Number of Observations: 144
+        - Number of Duplicates: 0
+        - First 10 Observations: 
+STATISTIC CODE                      Statistic  TLIST(A1)  Year   LGD2014            Local Government District  VALUE
+           ART ambulance-response-time-median       2010  2010 N09000001              Antrim and Newtownabbey    442
+           ART ambulance-response-time-median       2010  2010 N09000002 Armagh City, Banbridge and Craigavon    429
+           ART ambulance-response-time-median       2010  2010 N09000003                              Belfast    340
+           ART ambulance-response-time-median       2010  2010 N09000004             Causeway Coast and Glens    529
+           ART ambulance-response-time-median       2010  2010 N09000005              Derry City and Strabane    379
+           ART ambulance-response-time-median       2010  2010 N09000006                  Fermanagh and Omagh    371
+           ART ambulance-response-time-median       2010  2010 N09000007              Lisburn and Castlereagh    362
+           ART ambulance-response-time-median       2010  2010 N09000008                  Mid and East Antrim    415
+           ART ambulance-response-time-median       2010  2010 N09000009                           Mid Ulster    498
+           ART ambulance-response-time-median       2010  2010 N09000010               Newry, Mourne and Down    431
+        - Last 10 Observations: 
+STATISTIC CODE                      Statistic  TLIST(A1)  Year   LGD2014 Local Government District  VALUE
+           ART ambulance-response-time-median       2021  2021 N09000003                   Belfast   1338
+           ART ambulance-response-time-median       2021  2021 N09000004  Causeway Coast and Glens   1393
+           ART ambulance-response-time-median       2021  2021 N09000005   Derry City and Strabane    825
+           ART ambulance-response-time-median       2021  2021 N09000006       Fermanagh and Omagh   1165
+           ART ambulance-response-time-median       2021  2021 N09000007   Lisburn and Castlereagh   1872
+           ART ambulance-response-time-median       2021  2021 N09000008       Mid and East Antrim   1727
+           ART ambulance-response-time-median       2021  2021 N09000009                Mid Ulster   1624
+           ART ambulance-response-time-median       2021  2021 N09000010    Newry, Mourne and Down   2244
+           ART ambulance-response-time-median       2021  2021 N09000011       Ards and North Down   1790
+           ART ambulance-response-time-median       2021  2021 N92000002                        NI   1477
+        
+
+- The data cube has the following value counts:
+        - Value counts broken-down by measure and unit (of measure):
+                       Measure    Unit  Count
+ambulance-response-time-median Seconds    144
+        
