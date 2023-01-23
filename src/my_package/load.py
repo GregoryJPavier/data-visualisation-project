@@ -7,23 +7,23 @@ from csvcubed.cli.inspect.metadataprinter import (
     MetadataPrinter,
     to_absolute_rdflib_file_path,
 )
-from csvcubed.utils.sparql_handler.sparqlmanager import (
+from csvcubed.utils.sparql_handler.sparqlquerymanager import (
     select_csvw_dsd_qube_components,
-    select_qb_dataset_url,
 )
 from csvcubed.utils.tableschema import CsvwRdfManager
+from csvcubed.utils.sparql_handler.data_cube_state import DataCubeState
 
 # Hardcoded json path
 # Should point to main metadata.json file provided by users in their CSVW
 csvw_metadata_json_path = Path(
-    # "/Users/gregorypavier/project_dir/out/sweden-at-eurovision-no-missing.csv-metadata.json"
-    "/Users/gregorypavier/project_dir/out/ambulanc_response_times/ambulance-response-times-by-local-authority.csv-metadata.json"
+    "/Users/gregorypavier/project_dir/out/sweden-at-eurovision-no-missing.csv-metadata.json"
+    # "/Users/gregorypavier/project_dir/out/ambulanc_response_times/ambulance-response-times-by-local-authority.csv-metadata.json"
 )
 
 # Directory that contains csv files
 csvw_dimension_columns_path = (
-    #"/Users/gregorypavier/project_dir/out/"
-    "/Users/gregorypavier/project_dir/out/ambulance_responses_times/"
+    "/Users/gregorypavier/project_dir/out/"
+    # "/Users/gregorypavier/project_dir/out/ambulance_responses_times/"
 )
 
 csvw_rdf_manager = CsvwRdfManager(csvw_metadata_json_path)
@@ -33,45 +33,32 @@ csvw_metadata_rdf_validator = MetadataValidator(
     csvw_metadata_rdf_graph, csvw_metadata_json_path
 )
 
-(
-    valid_csvw_metadata,
-    csvw_type,
-) = csvw_metadata_rdf_validator.validate_and_detect_type()
+csvw_type = csvw_metadata_rdf_validator.detect_csvw_type()
 
-if valid_csvw_metadata:
-    (
-        type_printable,
-        catalog_metadata_printable,
-        dsd_info_printable,
-        codelist_info_printable,
-        dataset_observations_printable,
-        val_counts_by_measure_unit_printable,
-        codelist_hierarchy_info_printable,
-    ) = _generate_printables(
-        csvw_type, csvw_metadata_rdf_graph, csvw_metadata_json_path
-    )
-else:
-    print("CSV-W didn't appear to be valid")
+data_cube = DataCubeState(
+    csvw_rdf_manager.rdf_graph, csvw_rdf_manager.csvw_metadata_file_path
+)
 
 metadata_printer = MetadataPrinter(
-    csvw_type, csvw_metadata_rdf_graph, csvw_metadata_json_path
+    csvw_type=csvw_type,
+    csvw_metadata_rdf_graph=csvw_metadata_rdf_graph,
+    csvw_metadata_json_path=csvw_metadata_json_path,
+    data_cube_state=data_cube,
+    code_list_state=None,
 )
 
 metadata_printer.generate_general_results()
 
-dsd_components = select_csvw_dsd_qube_components(
-    csvw_metadata_rdf_graph,
-    metadata_printer.result_dataset_label_dsd_uri.dsd_uri,
-    csvw_metadata_json_path,
-)
-
 dataset_uri = to_absolute_rdflib_file_path(
     metadata_printer.result_catalog_metadata.dataset_uri, csvw_metadata_json_path
 )
-csv_path = (
-    csvw_metadata_json_path.parent
-    / select_qb_dataset_url(csvw_metadata_rdf_graph, dataset_uri).dataset_url
+
+cube_identifiers = data_cube.get_cube_identifiers_for_data_set(
+    metadata_printer.result_catalog_metadata.dataset_uri
 )
+dsd_components = data_cube.get_dsd_qube_components_for_csv(cube_identifiers.csv_url)
+cube_shape = data_cube.get_shape_for_csv(cube_identifiers.csv_url)
+csv_path = csvw_metadata_json_path.parent / cube_identifiers.csv_url
 
 # Class that builds a pandas dataframe from csv file
 # Class also updates dataframe to use 'Lables' values instead of 'Notation' values
@@ -80,20 +67,24 @@ class buildDataFrame:
     data = pd.read_csv(csv_path)
 
     obs_val_columns = set(data.columns) - {
-        component.csv_col_title for component in dsd_components.qube_components
+        col.title
+        for component in dsd_components.qube_components
+        for col in component.real_columns_used_in
     }
     obs_val_column_title = obs_val_columns.pop()
 
     dimension_column_titles = {
-        component.csv_col_title
+        col.title
         for component in dsd_components.qube_components
+        for col in component.real_columns_used_in
         if component.property_type == "Dimension"
         and component.property != "http://purl.org/linked-data/cube#measureType"
     }
 
     measure_columns = {
-        component.csv_col_title
+        col.title
         for component in dsd_components.qube_components
+        for col in component.real_columns_used_in
         if component.property_type == "Dimension"
         and component.property == "http://purl.org/linked-data/cube#measureType"
     }
@@ -106,8 +97,9 @@ class buildDataFrame:
     }
 
     units_columns = {
-        component.csv_col_title
+        col.title
         for component in dsd_components.qube_components
+        for col in component.real_columns_used_in
         if component.property_type == "Attribute"
         and component.property
         == "http://purl.org/linked-data/sdmx/2009/attribute#unitMeasure"
