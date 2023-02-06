@@ -1,14 +1,10 @@
 from pathlib import Path
 
 import pandas as pd
-from csvcubed.cli.inspect.inspect import _generate_printables
 from csvcubed.cli.inspect.metadatainputvalidator import MetadataValidator
 from csvcubed.cli.inspect.metadataprinter import (
     MetadataPrinter,
     to_absolute_rdflib_file_path,
-)
-from csvcubed.utils.sparql_handler.sparqlquerymanager import (
-    select_csvw_dsd_qube_components,
 )
 from csvcubed.utils.tableschema import CsvwRdfManager
 from csvcubed.utils.sparql_handler.data_cube_state import DataCubeState
@@ -16,12 +12,12 @@ from csvcubed.utils.sparql_handler.data_cube_state import DataCubeState
 # Hardcoded json path
 # Should point to main metadata.json file provided by users in their CSVW
 csvw_metadata_json_path = Path(
-    "/Users/gregorypavier/project_dir/out/sweden-at-eurovision-no-missing.csv-metadata.json"
+    "/Users/gregorypavier/project_dir/out/sweden-at-eurovision.csv-metadata.json"
     # "/Users/gregorypavier/project_dir/out/ambulanc_response_times/ambulance-response-times-by-local-authority.csv-metadata.json"
 )
 
 # Directory that contains csv files
-csvw_dimension_columns_path = (
+csvw_directory = (
     "/Users/gregorypavier/project_dir/out/"
     # "/Users/gregorypavier/project_dir/out/ambulance_responses_times/"
 )
@@ -111,10 +107,8 @@ class buildDataFrame:
     # Therefore, for cleanliness, we will replace these values with the more presentable 'Label' values
     for dim in dimension_column_titles:
         data[dim] = data[dim].astype("category")
-        if Path(csvw_dimension_columns_path + str(dim).lower() + ".csv").exists():
-            replace_df = pd.read_csv(
-                csvw_dimension_columns_path + str(dim).lower() + ".csv"
-            )
+        if Path(csvw_directory + str(dim).lower() + ".csv").exists():
+            replace_df = pd.read_csv(csvw_directory + str(dim).lower() + ".csv")
             replace_dict = replace_df.set_index("Notation").to_dict()["Label"]
             data[dim] = data[dim].cat.rename_categories(replace_dict)
 
