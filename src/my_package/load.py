@@ -112,8 +112,6 @@ class buildDataFrame:
             replace_dict = replace_df.set_index("Notation").to_dict()["Label"]
             data[dim] = data[dim].cat.rename_categories(replace_dict)
 
-    # data[obs_val_column_title] = data[obs_val_column_title].astype("int")
-
     data[measure_column_title] = data[measure_column_title].astype("category")
     data[measure_column_title] = data[measure_column_title].cat.rename_categories(
         measure_dict
