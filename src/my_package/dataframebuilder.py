@@ -10,7 +10,7 @@ from csvcubed.utils.tableschema import CsvwRdfManager
 from csvcubed.utils.sparql_handler.data_cube_state import DataCubeState
 
 
-class Load:
+class CsvwDataFrameBuilder:
 
     # Function that sets up dataframe and incorporates functions leveraged from csvcubed
     def buildDataFrame(self, csvw_metadata_json_path: Path) -> None:
